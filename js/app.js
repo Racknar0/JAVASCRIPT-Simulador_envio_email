@@ -6,7 +6,7 @@ const formulario = document.querySelector('#enviar-mail');
 const email = document.querySelector('#email');
 const asunto = document.querySelector('#asunto');
 const mensaje = document.querySelector('#mensaje');
-
+const er = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 eventListeners();
 function eventListeners() {
@@ -31,8 +31,10 @@ function validarFormulario(e) {
     if (e.target.value.length > 0) {
 
         // Elimina el mensaje de error del dom
-        const error = document.querySelector('p.error')
-        error.remove();
+        const error = document.querySelector('p.error');
+        if(error){
+            error.remove();
+        }
 
         e.target.classList.remove('border', 'border-red-500');
         e.target.classList.add('border', 'border-green-500');
@@ -45,18 +47,28 @@ function validarFormulario(e) {
     }
 
     if (e.target.type === 'email') {
-        const er = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if(er.test( e.target.value )) {
+            // Elimina el mensaje de error del dom
+            const error = document.querySelector('p.error');
+            if(error){
+                error.remove();
+            }
+
             e.target.classList.remove('border', 'border-red-500');
             e.target.classList.add('border', 'border-green-500');
-            error.remove();
         } else {
             e.target.classList.remove('border', 'border-green-500');
              e.target.classList.add('border', 'border-red-500');
             mostrarError('Email no valido');
         }
     }
+
+    if(er.test( email.value ) && asunto.value !== '' && mensaje.value !== ''){
+        console.log('validado');
+        btnEnviar.disabled = false;
+        btnEnviar.classList.remove('cursor-not-allowed', 'opacity-50');
+    } 
 }
 
 function mostrarError(mensaje) {
