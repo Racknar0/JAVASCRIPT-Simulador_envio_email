@@ -1,5 +1,6 @@
 //Variables
 const btnEnviar = document.querySelector('#enviar');
+const btnReset = document.querySelector('#resetBtn'); 
 const formulario = document.querySelector('#enviar-mail');
 
 //variables para campos
@@ -12,9 +13,16 @@ eventListeners();
 function eventListeners() {
     document.addEventListener('DOMContentLoaded', iniciarApp); //!iniciando app
 
+    //campos del formulario
     email.addEventListener('blur', validarFormulario);
     asunto.addEventListener('blur', validarFormulario);
     mensaje.addEventListener('blur', validarFormulario);
+
+    //enviar email
+    formulario.addEventListener('submit', enviarEmail);
+
+    //btn reset
+    btnReset.addEventListener('click', resetarFormulario);
 }
 
 
@@ -44,6 +52,7 @@ function validarFormulario(e) {
         e.target.classList.add('border', 'border-red-500');
     
         mostrarError('Todos los campos son obligatorios');
+        iniciarApp();
     }
 
     if (e.target.type === 'email') {
@@ -61,11 +70,11 @@ function validarFormulario(e) {
             e.target.classList.remove('border', 'border-green-500');
              e.target.classList.add('border', 'border-red-500');
             mostrarError('Email no valido');
+            iniciarApp();
         }
     }
 
     if(er.test( email.value ) && asunto.value !== '' && mensaje.value !== ''){
-        console.log('validado');
         btnEnviar.disabled = false;
         btnEnviar.classList.remove('cursor-not-allowed', 'opacity-50');
     } 
@@ -80,4 +89,42 @@ function mostrarError(mensaje) {
     if (errores.length === 0) {
         formulario.appendChild(mensajeError)
     } 
+}
+
+//enviar el email
+function enviarEmail(e) {
+    e.preventDefault();
+
+    //mostrar spinner
+    const spinner = document.querySelector('#spinner');
+    spinner.style.display = 'flex';
+
+    // Después de 3 Seg Ocultar Spinner  y mostrar mensaje
+    setTimeout(() => {
+        spinner.style.display = 'none';
+
+        //Mensaje
+        const parrafo = document.createElement('P');
+        parrafo.textContent = 'El mensaje se envio Correctamente!';
+        parrafo.classList.add('text-center', 'my-10', 'p-2', 'bg-green-500', 'text-white', 'font-bold', 'uppercase')
+
+        //insertar parafo antes del spinner
+        formulario.insertBefore(parrafo, spinner);
+
+        setTimeout(() => {
+            parrafo.remove(); //elimina el mensaje
+            resetarFormulario(); // resetea formulario
+            email.classList.remove('border-green-500');
+            asunto.classList.remove('border-green-500');
+            mensaje.classList.remove('border-green-500');
+        }, 5000);
+
+    }, 3000);
+}
+
+
+//funcion que resetea el formulario
+function resetarFormulario() {
+    formulario.reset();
+    iniciarApp();
 }
